@@ -9,6 +9,8 @@
 #include "InputActionValue.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "DungeonEscape.h"
+#include "Lock.h"
+#include "CollectableItem.h"
 
 ADungeonEscapeCharacter::ADungeonEscapeCharacter()
 {
@@ -123,5 +125,38 @@ void ADungeonEscapeCharacter::DoJumpEnd()
 
 void ADungeonEscapeCharacter::DoInteract()
 {
-	UE_LOG(LogTemp, Display, TEXT("DoInteract Click"));
+	FVector StartPos = FirstPersonCameraComponent->GetComponentLocation();
+	FVector EndPos = StartPos + FirstPersonCameraComponent->GetForwardVector() * MAXInteractionDistance;
+	DrawDebugLine(GetWorld(), StartPos, EndPos, FColor::Red, false, 5.0f);
+	DrawDebugSphere(GetWorld(), EndPos, MAXInteractionRadius, 32, FColor::Green, false, 5.0f);
+
+	UE_LOG(LogTemp, Display, TEXT("DoInteract Click 111"));
+
+	FCollisionShape HitSphere = FCollisionShape::MakeSphere(MAXInteractionRadius);
+	FHitResult HitResult;
+	bool HasHit = GetWorld()->SweepSingleByChannel(HitResult, StartPos, EndPos, FQuat::Identity, ECC_GameTraceChannel2, HitSphere);
+
+	if (HasHit) 
+	{
+		AActor* HitActor = HitResult.GetActor();
+		UE_LOG(LogTemp, Display, TEXT("DoInteract Hit Actor %s"), *HitActor->GetName());
+		if (HitActor->ActorHasTag("CollectableItem")) 
+		{
+			ACollectableItem* CollectableItemActor = Cast<ACollectableItem>(HitActor);
+			UE_LOG(LogTemp, Display, TEXT("DoInteract Hit CollectableItemActor"));
+
+		}
+		else if (HitActor->ActorHasTag("Lock")) 
+		{
+			ALock* LockActor = Cast<ALock>(HitActor);
+			UE_LOG(LogTemp, Display, TEXT("DoInteract Hit LockActor %s"), *LockActor->KeyItemName);
+
+		}
+	}
+	else 
+	{
+		UE_LOG(LogTemp, Display, TEXT("DoInteract No Hit Actor"));
+	}
+
+
 }
