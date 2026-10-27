@@ -104,5 +104,9 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	float MAXInteractionRadius = 50.0f;
 
+private:
+	UPROPERTY(VisibleAnywhere)
+	TArray<FString> ItemList;
+
 };
 

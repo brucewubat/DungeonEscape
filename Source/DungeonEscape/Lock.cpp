@@ -26,7 +26,7 @@ void ALock::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	SetKeyItemPlaced(true);
+	SetKeyItemPlaced(false);
 }
 
 // Called every frame

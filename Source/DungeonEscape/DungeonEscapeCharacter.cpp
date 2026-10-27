@@ -149,6 +149,20 @@ void ADungeonEscapeCharacter::DoInteract()
 		else if (HitActor->ActorHasTag("Lock")) 
 		{
 			ALock* LockActor = Cast<ALock>(HitActor);
+			bool isPlaced = LockActor->GetKeyItemPlaced();
+			FString itemName = LockActor->KeyItemName;
+			if (isPlaced) 
+			{
+				ItemList.Remove(itemName);
+				LockActor->SetKeyItemPlaced(false);
+			}
+			else 
+			{
+				ItemList.Add(itemName);
+				LockActor->SetKeyItemPlaced(true);
+			}
+
+
 			UE_LOG(LogTemp, Display, TEXT("DoInteract Hit LockActor %s"), *LockActor->KeyItemName);
 
 		}
